@@ -1,0 +1,257 @@
+<<<<<<< HEAD
+package com.exam02;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Scanner;
+import java.util.Set;
+
+public class CapitalTest {
+	File dir, file;
+	
+	
+	public static Scanner sc = new Scanner(System.in);
+	private HashMapString, String map = new HashMapString, String();
+		public CapitalTest() {
+			dir = new File(srccomexam02);
+			file = new File(dir, myCapialTest.txt);
+			map.clear();
+			try {
+				if(!file.exists()) {
+					file.createNewFile();
+					return;
+				}
+				Scanner scanner = new Scanner(file);
+				while(scanner.hasNext()) {
+					String country = scanner.next();
+					String capital = scanner.next();
+					map.put(country,  capital);
+				}
+				scanner.close();
+			}catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			
+			map.put(한국,서울);
+			map.put(일본,동경);
+			map.put(중국,베이찡);
+			map.put(미국,워싱턴);
+			map.put(영국,런던);
+			map.put(프랑스,파리);
+			map.put(독일,베를린);
+		}
+		
+		public static void showMenu() {
+			
+			System.out.println( 수도 맞추기 게임을 시작합니다. );
+			System.out.println(입력1, 퀴즈2, 종료3);
+		}
+		private void input() {
+			
+			
+			System.out.println(현재+map.size()+ 개 나라와 수도 입력);
+			while(true) {
+				System.out.println(나라와 수도 입력 (종료는 x));
+				String cont = sc.next();
+				if(cont.toUpperCase().equals(X)) break;
+				if(map.containsKey(cont)) {
+					System.out.println(이미 입력한 나라입니다.);
+					continue;
+				}
+				String sudo = sc.next();
+				map.put(cont, sudo);
+			}
+			
+		}
+
+		private void test() {
+			SetString set = map.keySet();
+			Object[] arr = set.toArray();
+			while(true) {
+				int n = (int)(Math.random()map.size());
+				String city = (String) arr[n];
+				String dosi = map.get(city);
+				
+				System.out.println(city + 의 수도는 종료는x);
+				String answer = sc.next();
+				if(answer.toLowerCase().equals(x)) break;
+				if(answer.equals(dosi)) {
+					System.out.println(정답);
+				}else {
+					System.out.println(틀렸습니다.);
+				}
+			}
+		}
+		private void save() {
+			FileWriter fw =null;
+			try {
+				fw = new FileWriter(file);
+				SetString set = map.keySet();
+				IteratorString it = set.iterator();
+				while(it.hasNext()) {
+					String key = it.next();
+					String value = map.get(key);
+					fw.write(key+ );
+					fw.write(value + t);
+				}
+				fw.close();
+				System.out.println(종료);
+				System.exit(0);
+				
+			}catch (IOException e) {
+				e.printStackTrace();
+				System.out.println(파일저장 오류);
+			}
+		}
+		
+
+	public static void main(String[] args) {
+		 CapitalTest ca = new CapitalTest();
+		 while(true) {
+			 CapitalTest.showMenu();
+			 int choice = sc.nextInt();
+			 switch(choice) {
+			 case 1 ca.input(); break;
+			 case 2 ca.test(); break;
+			 case 3 System.out.println(종료);
+			 		System.exit(0);
+			 default System.out.println(입력오류);
+			 }
+		 }
+		
+		
+	}
+}
+=======
+package com.exam02;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Scanner;
+import java.util.Set;
+
+public class CapitalTest {
+	File dir, file;
+	
+	
+	public static Scanner sc = new Scanner(System.in);
+	private HashMapString, String map = new HashMapString, String();
+		public CapitalTest() {
+			dir = new File(srccomexam02);
+			file = new File(dir, myCapialTest.txt);
+			map.clear();
+			try {
+				if(!file.exists()) {
+					file.createNewFile();
+					return;
+				}
+				Scanner scanner = new Scanner(file);
+				while(scanner.hasNext()) {
+					String country = scanner.next();
+					String capital = scanner.next();
+					map.put(country,  capital);
+				}
+				scanner.close();
+			}catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			
+			map.put(한국,서울);
+			map.put(일본,동경);
+			map.put(중국,베이찡);
+			map.put(미국,워싱턴);
+			map.put(영국,런던);
+			map.put(프랑스,파리);
+			map.put(독일,베를린);
+		}
+		
+		public static void showMenu() {
+			
+			System.out.println( 수도 맞추기 게임을 시작합니다. );
+			System.out.println(입력1, 퀴즈2, 종료3);
+		}
+		private void input() {
+			
+			
+			System.out.println(현재+map.size()+ 개 나라와 수도 입력);
+			while(true) {
+				System.out.println(나라와 수도 입력 (종료는 x));
+				String cont = sc.next();
+				if(cont.toUpperCase().equals(X)) break;
+				if(map.containsKey(cont)) {
+					System.out.println(이미 입력한 나라입니다.);
+					continue;
+				}
+				String sudo = sc.next();
+				map.put(cont, sudo);
+			}
+			
+		}
+
+		private void test() {
+			SetString set = map.keySet();
+			Object[] arr = set.toArray();
+			while(true) {
+				int n = (int)(Math.random()map.size());
+				String city = (String) arr[n];
+				String dosi = map.get(city);
+				
+				System.out.println(city + 의 수도는 종료는x);
+				String answer = sc.next();
+				if(answer.toLowerCase().equals(x)) break;
+				if(answer.equals(dosi)) {
+					System.out.println(정답);
+				}else {
+					System.out.println(틀렸습니다.);
+				}
+			}
+		}
+		private void save() {
+			FileWriter fw =null;
+			try {
+				fw = new FileWriter(file);
+				SetString set = map.keySet();
+				IteratorString it = set.iterator();
+				while(it.hasNext()) {
+					String key = it.next();
+					String value = map.get(key);
+					fw.write(key+ );
+					fw.write(value + t);
+				}
+				fw.close();
+				System.out.println(종료);
+				System.exit(0);
+				
+			}catch (IOException e) {
+				e.printStackTrace();
+				System.out.println(파일저장 오류);
+			}
+		}
+		
+
+	public static void main(String[] args) {
+		 CapitalTest ca = new CapitalTest();
+		 while(true) {
+			 CapitalTest.showMenu();
+			 int choice = sc.nextInt();
+			 switch(choice) {
+			 case 1 ca.input(); break;
+			 case 2 ca.test(); break;
+			 case 3 System.out.println(종료);
+			 		System.exit(0);
+			 default System.out.println(입력오류);
+			 }
+		 }
+		
+		
+	}
+}
+>>>>>>> 34af2d8ad5a0d8d6ea72b5203525e8a1a8385329
