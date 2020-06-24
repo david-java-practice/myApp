@@ -1448,3 +1448,904 @@ FROM employees;
 
 
 
+
+--day 6
+
+
+
+
+
+
+--DML 작업 : 데이터베이스에 데이터를 입력, 수정, 삭제하는 명령어이다.
+--데이터베이스의 내용을 변경하는 작업을 수행함으로 주의깊게 실행해야 한다.
+
+--INSERT: 새 행을 입력하기
+--1. 실행전 열과 제약조건을 확인 (DESC + 테이블)
+DESC departments;   --describe 약자 (요약)
+
+
+--전체 열을 다 입력하는 방법 1
+INSERT INTO departments (department_id, department_name, manager_id, location_id)
+VALUES ( 71, '개발부 1', 100, 1700);
+
+SELECT *
+FROM departments;
+
+commit;
+
+--열의 이름이 없는 경우 전체 열을 다 입력해야 함
+INSERT INTO departments
+VALUES (72, '개발부 2', 100, 1700);
+
+COMMIT;
+
+--열의 순서를 바꿀경우
+INSERT INTO departments (department_name, manager_id, locations_id, department_id)
+VALUES ('개발부 3', 100, 1700, 73);
+
+COMMIT;
+
+
+--자동으로 널값 입력
+INSERT INTO departments (department_id, department_name )
+VALUES (74, '개발부 4');
+COMMIT;
+DESC departments;
+
+
+--SYSDATE 현재 날짜 입력
+INSERT INTO employees (employee_id, first_name, last_name, email, hire_date, job_id)
+VALUES (1, '길동', '홍', 'hong@naver.com', SYSDATE, 'IT_PROG');
+COMMIT;
+
+SELECT*
+FROM employees;
+
+DESC employees;
+
+
+--날짜 입력하기
+INSERT INTO employees (employee_id, first_name, last_name, email, hire_date, job_id)
+VALUES (2, '길동', '강', 'kang@naver.com', TO_DATE('2020-04-05','YYYY-MM-DD'), 'IT_PROG');
+COMMIT;
+
+
+--사용자로부터 직접입력받기
+INSERT INTO department (department_id, department_name )
+VALUES (&id, '&name');  -- 75 개발부 5
+COMMIT;
+
+
+
+--테이블 만들기
+CREATE TABLE XX_EMP (
+    EMPNO NUMBER,
+    ENAME VARCHAR2(100),
+    SAL    NUMBER);
+ 
+--테이블 전체를 카피해서 입력하는 방법    
+INSERT INTO XX_EMP (EMPNO, ENAME, SAL)
+SELECT employee_id, first_name, salary
+FROM employees;
+
+
+-- INSERT를 실행중에 에러가 나는 경우
+-- 기본키에 이미 있는 (중복된) 값을 입력할 경우
+INSERT INTO departments (department_id, department_name, manager_id, locatoin_id )
+VALUES (10, '개발부 10', 100, 1700); 
+
+
+--2 FK(외래키)에 참조되지 않은 값을 입력
+INSERT INTO departments (department_id, department_name, manager_id, locatoin_id )
+VALUES (5, '개발부 5', 100, 1); 
+
+
+--3 데이터의 종류가 다를때
+INSERT INTO departments (department_id, department_name, manager_id, locatoin_id )
+VALUES (5, '개발부 5', 100, 'D1'); 
+
+
+--4 데이터의 사이즈가 맞지 않을때
+INSERT INTO departments (department_id, department_name, manager_id, locatoin_id )
+VALUES (5, '개발부 5개발부 5개발부 5개발부 5개발부 5개발부 5개발부 5개발부 5', 100, 'D1'); 
+
+
+--5 테이블을 카피하기
+CREATE TABLE COPY_DEPT
+AS
+SELECT * FROM departments;
+
+
+--예제1)
+-- departments 테이블에 다음과 같이 각각의 depatment_id, department_name,
+--manager_id가 200, location_id가 1700인 행을 3개 입력하세요.
+INSERT INTO departments (department_id, department_name, manager_id, location_id)
+VALUES (271, 'Sample Dept 1', 200, 1700);
+
+INSERT INTO departments (department_id, department_name, manager_id, location_id)
+VALUES (272, 'Sample Dept 2', 200, 1700);
+
+INSERT INTO departments (department_id, department_name, manager_id, location_id)
+VALUES (273, 'Sample Dept 3', 200, 1700);
+COMMIT;
+
+
+--예제2)
+--아래와 같이 테이블을 만든후 SELECT문을 이용하여 departments 테이블 내용을 전부 입력하시오.
+CREATE TABLE copy_departments ( department_id number(4,0),
+                                department_name varchar2(30 byte),
+                                manager_id number(6,0),
+                                location_id number(4,0));
+                            
+INSERT INTO copy_departments
+SELECT * FROM departments;
+
+
+
+
+-- UPDATE: 데이터 수정하기
+
+
+--업데이트 사용시 WHERE 절에 항상 기본키를 활용한다.
+CREATE TABLE copy_emp
+AS
+SELECT * FROM employees;
+
+UPDATE copy_emp
+SET salary = 24100
+WHERE employee_id = 100;
+COMMIT;
+
+
+--의도치 않게 이름이 같은 사람이 업데이트됨
+UPDATE copy_emp
+SET salary = 24100
+WHERE first_name = 'Steven';
+COMMIT;
+
+
+--WHERE 절을 안썼을때
+UPDATE copy_emp
+SET phone_number = '123-456-789';
+ROLLBACK;
+
+
+--예제1) 
+--copy_dept 테이블의 '개발부 4, 5'부서의 매니저와 location ID를 업데이트 해보자.
+UPDATE copy_dept
+SET manager_id = 100, location_id = 1800
+WHERE department_id = 74;
+
+UPDATE copy_dept
+SET manager_id = 100, location_id = 1800
+WHERE department_id = 5;
+
+
+INSERT INTO copy_dept ( department_id, department_name, manager_id, location_id)
+VALUES (280, 'Music', 100, 1800);
+
+
+--예제2)
+-- copy_dept  테이블에서 department_id 150부터 200까지 부서번호의 manager_id를 100으로 수정하라.
+UPDATE copy_dept
+SET manager_id = 100
+WHERE department_id BETWEEN 150 AND 200;
+
+
+
+--DELETE 데이터 삭제
+
+
+-- WHERE 절의 조건에 해당하는 행단위로 데이터를 삭제한다
+-- 테이블을 삭제해도 테이블의 물리적인 구조는 변하지 않는다.
+
+--71번~75번 부서번호 삭제
+DELETE FROM departments
+WHERE department_id BETWEEN 71 AND 75;
+COMMIT;
+
+
+--employees 테이블 id 1번 2번 삭제
+DELETE FROM employees
+WHERE employee_id IN (1, 2);
+COMMIT;
+
+
+--테이블 전체 삭제 : 테이블은 그대로 있고 데이터만 삭제 ( ROLLBACK 가능)
+DELETE FROM copy_departments;
+ROLLBACK;
+
+
+--TRUNCATE : 전체 삭제(ROLLBACK 불가능)
+TRUNCATE TABLE copy_departments;
+ROLLBACK;
+
+
+--DROP TABLE : 테이블 삭제
+DROP TABLE copy_departments;
+DROP TABLE copy_dept;
+DROP TABLE xx_emp;
+
+
+--SAVE POINT(세이브 포인트) : 중간저장 (ROLLBACK TO SAVEPOINT하면 savepoint 상태로 돌아옴)
+SELECT * FROM copy_emp
+WHERE employee_id = 108;  --salary 12008
+
+UPDATE copy_emp
+SET salary = salary + 10
+WHERE employee_id = 108;
+-- salary 값이 12018
+-- 세이브 포인트 만들기
+SAVEPOINT A;
+
+
+UPDATE copy_emp
+SET salary = salary + 20
+WHERE employee_id = 108;
+
+
+--세이브포인트로 롤백
+ROLLBACK TO SAVEPOINT A;
+--salary 값이 12018
+--롤백
+ROLLBACK;
+
+COMMIT;
+
+
+
+
+--DATETYPE : 데이터 타입(자료형)이란 컴퓨터 시스템과 프로그래밍 언어에서 실수, 정수, 소수 자료형 등의 여러 종류의
+--데이터를 식별하는 타입으로서, 해당 자료형에 대한 가능한 값, 해당 자료형에서 수행을 할 수 있는 명령어, 데이터의 형태
+-- 의미, 크기와 해당 자료형의 값이 저장되는 방식이다.
+
+--문자형
+--문자형 char 와 varchar2 비교
+CREATE TABLE COMP (
+    char_col CHAR(4),
+    varchar_col VARCHAR2(4)
+    );
+INSERT INTO comp VALUES ('AA', 'AA');
+INSERT INTO comp VALUES ('AAA', 'AAA');
+INSERT INTO comp VALUES ('AAAA', 'AAAA');
+COMMIT;
+ROLLBACK;
+
+
+SELECT * FROM comp;
+
+SELECT * FROM comp
+WHERE char_col = varchr_col;
+-- char는 고정길이 데이터 타입, carchar2는 가변길이 데이터 타입
+
+
+
+--숫자형 데이터 타입 NUMBER
+--NUMBER(p,s) : p는 유효자리수 1~38, s는 소수점 유효자리수
+
+
+
+--DATE 타입
+SELECT hire_date, to_char(hire_date, 'YYYY-MM-DD') "날짜=>문자 형변환"
+FROM employees;
+
+SELECT *
+FROM employees
+WHERE hire_date < '2002/03/03';
+--오라클에서 자동을 오른쪽 문자를 좌측에 날짜형 타입에 맞게 형변환 하여 비교함.
+
+
+
+
+--테이블 만들기
+CREATE TABLE ex_date(  --테이블 이름
+    ex_id   NUMBER(2),  --열의 이름, 데이터타입
+    start_date  DATE    DEFAULT SYSDATE   --티폴트는 입력안될시 디폴트 뒤의 값으로
+    );
+INSERT INTO ex_date(ex_id)
+VALUES (1);
+INSERT INTO ex_date(ex_id)
+VALUES (2);
+INSERT INTO ex_date(ex_id)
+VALUES (3);
+COMMIT;
+SELECT * FROM ex_date;
+DESC ex_date;
+
+
+
+--테이블 삭제하기
+DROP TABLE comp;
+DROP TABLE copy_emp;
+
+
+
+--예제1)
+-- product_id(number 타입), product_name(varchar2 타입, 20자리), menu_date(date 타입) 열이 있는
+--sample_product 이름의 테이블을 생성해 보세요.
+CREATE TABLE sample_product(
+    product_id  NUMBER,
+    product_name    VARCHAR2(20),
+    menu_date       DATE
+    );
+    
+    
+--예제2)
+--위에서 만든 테이블을 삭제해 보세요. DESCRIBE 절로 테이블이 잘 삭제되었는지 확인하세요.
+DROP TABLE sample_product;
+DESC sample_product;
+
+
+
+--제약조건
+--제약 조건이랑 테이블 단위에서 데이터의 무결성을 보장해주는 규칙이다. 제약 조건은 테이블에 데이터가 입력
+-- 수정, 삭제되거나 테이블이 삭제,변경될 경우 잘못된 트랜잭션이 수행되지 않도록 결함을 유발할 가능성이
+--있는 작업을 방지하는 역할을 담당한다.
+CREATE TABLE emp(
+        eno     NUMBER(3) CONSTRAINT emp_emo_pk PRIMARY KEY,
+        emp_name    VARCHAR2(20)
+        );
+DESC emp;
+INSERT INTO emp 
+VALUES (2, '양');
+SELECT * FROM emp;
+
+DROP TABLE emp;
+
+--제약조건을 테이블 아래쪽에
+CREATE TABLE emp(
+        eno     NUMBER(3), 
+        emp_name    VARCHAR2(20),
+        CONSTRAINT emp_emo_pk PRIMARY KEY(eno)   --어딘지 알려줘야함
+        );
+
+
+--제약조건의 이름없이
+CREATE TABLE emp1 (
+        eno     NUMBER(3) PRIMARY KEY,
+        emp_name    VARCHAR2(20)
+        );
+INSERT INTO emp1
+VALUES (1, '박');
+
+DROP TABLE emp1;
+
+
+
+--NOT NULL / UK 유니크 : NULL값을 입력할 수 없다.
+CREATE TABLE emp1(
+        eno         NUMBER(3),
+        emp_name    VARCHAR2(20) CONSTRAINT emp1_ename_nn NOT NULL,
+        email       VARCHAR2(30) CONSTRAINT emp1_email_uk UNIQUE
+        );
+--NOT NULL 은 NULL 값을 넣을 수 없다.
+INSERT INTO emp1
+VALUES (1, NULL, 'hong@naver.com');
+DESC emp1;
+
+--UK 유니크는 동일한 값이 입력될 수 없다.
+INSERT INTO emp1
+VALUES (1, '홍길동', 'hong@naver.com');
+INSERT INTO emp1
+VALUES (2, '김유신', 'hong@naver.com');  --유니크에는 동일한 값을 넣을 수 없다.
+
+-- CHECK 제약조건: WHERE절에 기술하는 조건 형식과 동일
+CREATE TABLE emp2 (
+        eno     NUMBER(3),
+        emp_name    VARCHAR2(20) CONSTRAINT emp2_ename_nn NOT NULL,
+        sal     NUMBER(10),
+        CONSTRAINT emp2_sal_check CHECK (sal > 1000)
+        );
+INSERT INTO emp2
+VALUES (1, '홍길동', 999);    --CHECK 조건에 위반돼서 안됨.
+
+DROP TABLE emp;
+
+CREATE TABLE emp (
+        eno NUMBER(4)   PRIMARY KEY,   -- 제약조건 이름 생략
+        ename VARCHAR2(20) NOT NULL,
+        gno VARCHAR2(13)    UNIQUE CHECK (LENGTH(gno) >=8),
+        gender VARCHAR2(5)  CHECK(gender IN ('women', 'man'))
+        );
+INSERT INTO emp 
+VALUES (1, '김', '12345678', 'man');
+INSERT INTO emp 
+VALUES (2, '강', '123456789', 'woman');
+INSERT INTO emp 
+VALUES (3, '양', '123456789', 'human');
+
+
+--예제1) members 라는 새 테이블을 만듭니다. (제약조건 이름은 생략가능)
+CREATE TABLE members(
+            member_id   NUMBER(2)   PRIMARY KEY,
+            first_name  VARCHAR2(50)    NOT NULL,
+            last_name   VARCHAR2(50)    NOT NULL,
+            gender      VARCHAR2(5)     CHECK(gender IN ('women', 'man')),
+            birth_day   DATE            DEFAULT SYSDATE,
+            email       VARCHAR2(200)    UNIQUE  NOT NULL
+            );
+DESCRIBE members;
+
+
+
+--외래키 (FK): FK가 정의된 자식 테이블이다. 참조되는 테이블을 부모 테이블이라고 한다.
+--부모 테이블은 미리 생성되어 있어야 한다. 부모 테이블의 참조되는 컬럼에 존재하는 값 또는 NULL만 입력 가능
+
+DROP TABLE dept;  
+CREATE TABLE dept(
+    dno     NUMBER(4),
+    dname   VARCHAR2(20),
+    CONSTRAINT dept_dno_pk  PRIMARY KEY(dno)  --기본키
+    );
+    
+DROP TABLE emp;
+CREATE TABLE emp(
+    eno         NUMBER(4),
+    emp_name    VARCHAR2(20),
+    sal         NUMBER(10),
+    dno         NUMBER(4),
+    CONSTRAINT emp_eno_pk   PRIMARY KEY(eno),   --기본키
+    CONSTRAINT emp_dno_fk   FOREIGN KEY(dno)    
+    --REFERENCES dept(dno) ON DELETE CASCADE  --참조열 삭제시 자동삭제 (ON DELETE CASCADE)
+    REFERENCES dept(dno) ON DELETE SET NULL --참조(dept table(dno))도 같이 적어야함
+    -- NULL값 자동 입력
+    );
+    
+INSERT INTO dept
+VALUES (10, 'TEST1');
+INSERT INTO dept
+VALUES (20, 'TEST2');
+INSERT INTO dept
+VALUES (30, 'TEST3');
+INSERT INTO dept
+VALUES (40, 'TEST4');
+INSERT INTO dept
+VALUES (50, 'TEST5');
+
+SELECT * FROM dept;
+
+INSERT INTO emp VALUES (1010, 'Kim', 200, 10);
+INSERT INTO emp VALUES (1020, 'Lee', 210, 20);
+INSERT INTO emp VALUES (1030, 'Jung', 220, 30);
+INSERT INTO emp VALUES (1040, 'Oh', 250, 40);
+INSERT INTO emp VALUES (1050, 'King', 300, 50);
+
+SELECT * FROM emp;
+
+--외래키는 참조열의 값 이외에는 입력불가
+INSERT INTO emp VALUES (1060, 'Kang', 500, 60);   -- dept 참조열에 50까지밖에 없음
+--단, 널값은 입력가능
+INSERT INTO emp VALUES (1060, 'Kang', 500, NULL);
+            
+
+--삭제시 에러 발생 (참조열의 값은 지우면 에러)
+DELETE FROM dept
+WHERE dno = 30;
+
+-- 1 참조행 삭제시 자동 삭제
+-- ON DELETE CASCASE
+-- 2 참조행 삭제시 자동 널값
+-- ON DELETE SET NULL
+
+
+
+
+
+
+
+
+-- day7
+
+
+
+
+--제약조건의 추가 및 수정
+--클래스 테이블 생성
+CREATE TABLE class (
+        cno     VARCHAR2(2),
+        cname   VARCHAR2 (50)
+        );
+INSERT INTO class 
+VALUES ( '01', '데이터베이스');
+INSERT INTO class 
+VALUES ( '02', '자바');
+SELECT * FROM class;
+
+
+--학생테이블 생성
+CREATE TABLE student(
+    sno     VARCHAR2(4),
+    sname   VARCHAR2 (50),
+    cno     VARCHAR2(2)
+    );
+INSERT INTO student VALUES ('0414', '홍길동', '01');
+INSERT INTO student VALUES ('0415', '임꺽정', '02');
+INSERT INTO student VALUES ('0416', '이순신', '03');
+COMMIT;
+SELECT * FROM student;
+
+
+--클래스 테이블에 '기본키' 추가
+ALTER TABLE class
+ADD CONSTRAINT class_cno_pk PRIMARY KEY (cno);
+
+
+--기본키에는 NULL 값도 넣을 수 없음
+INSERT INTO class 
+VALUES ( NULL, '데이터베이스');
+
+
+--클래스 테이블에 '유니크키' 추가
+ALTER TABLE class
+ADD CONSTRAINT class_cname_uk UNIQUE (cname);
+
+
+-- 유니크는 중복안됨
+INSERT INTO class 
+VALUES ( '03', '데이터베이스');
+
+
+--제약조건을 조회하는 명령문
+SELECT *
+FROM ALL_CONSTRAINTS -- 모든 제약조건
+WHERE table_name = 'DEPARTMENTS';  -- 테이블명 입력시 대문자
+
+
+-- 학생 테이블에 기본키 추가
+ALTER TABLE student
+ADD CONSTRAINT student_sno_pk PRIMARY KEY (sno);
+
+
+-- 학생 테이블 sname NOT NULL 추가
+-- NOT NULL 일경우만 MODIFY 사용
+ALTER TABLE student
+MODIFY sname CONSTRAINT student_sname_nn NOT NULL;
+
+
+--학생 테이블에 외래키 추가 (참조하는 테이블과 열을 추가해야함)
+ALTER TABLE student
+ADD CONSTRAINT student_cno_fk FOREIGN KEY (cno) REFERENCES CLASS (cno);
+SELECT * FROM class;
+SELECT * FROM student;
+
+--제약조건을 추가할때 이미 만들어진 테이블에 각 행의 데이터가 만족해야 추가된다.
+UPDATE student SET cno = '01'
+WHERE sno = '0416';
+
+
+
+--제약조건의 삭제 : 2가지 방법이 있음
+--제약조건의 이름으로 삭제
+--CASCADE 옵션시 참조하는 외래키도 함께 삭제
+ALTER TABLE  class
+DROP CONSTRAINT class_cno_pk CASCADE;
+
+
+--제약조건으로 삭제
+ALTER TABLE class
+DROP UNIQUE (cname); --클래스 테이블의 cname열의 유니크 제약조건 삭제
+ALTER TABLE student
+DROP PRIMARY KEY;  --기본키의 삭제
+
+
+--테이블의 삭제
+DROP TABLE class;
+DROP TABLE student;
+
+
+
+--테이블 컬럼(열)의 추가와 삭제
+
+
+--1. 90번 부서의 직원들을 새테이블 EM_EMP에 원하는 열을 선택해 생성
+CREATE TABLE E_EMP
+AS SELECT employee_id, last_name, salary, department_id
+FROM employees
+WHERE department_id=90;
+DESC E_EMP;
+SELECT* FROM E_EMP;
+
+
+--2. 열의 이름을 지정하여 E_EMP2 생성
+CREATE TABLE E_EMP2 (emp_id, name, sal, dept_id)
+AS SELECT employee_id, last_name, salary, department_id
+FROM employees
+WHERE department_id=90;
+SELECT* FROM E_EMP2;
+
+
+--열의 추가
+SELECT * FROM E_EMP;
+
+ALTER TABLE E_EMP
+ADD (GENDER CHAR(1));  --젠더 열 추가 (입력 안된 값은 null)
+
+
+-- 디폴트 값을 0으로 하는 열 추가
+ALTER TABLE E_EMP
+ADD (커미션 NUMBER DEFAULT 0 NOT NULL);
+
+
+--두개의 열의 추가
+ALTER TABLE E_EMP
+ADD (날짜 DATE DEFAULT SYSDATE, 제작자 VARCHAR2(100) DEFAULT USER);
+
+
+--열의 수정
+SELECT * FROM E_EMP;
+
+-- 데이터 사이즈 수정
+ALTER TABLE E_EMP
+MODIFY (제작자 VARCHAR2(200));  -- VARCHAR2 사이즈 100 -> 200으로
+DESC E_EMP;
+
+ALTER TABLE E_EMP
+MODIFY (제작자 VARCHAR2(50));   -- VARCHAR2 사이즈 200 -> 50으로
+
+
+ALTER TABLE E_EMP
+MODIFY (제작자 VARCHAR2(1));  -- VARCHAR2 사이즈 50 -> 1으로  : 최소 2BYTE 아니면 에러
+
+ALTER TABLE E_EMP
+MODIFY (제작자 NUMBER);  -- 이미 문자형 데이터가 있기때문에 숫자형으로 에러
+
+SELECT * FROM E_EMP;
+DESC E_EMP;
+
+-- NULL값인 경웨 입력된 값이 없기때문에 데이터 형식을 바꿀 수 있음
+ALTER TABLE E_EMP
+MODIFY (gender NUMBER);   
+
+
+--제작자의 데이터 형식을 바꾸려 하면
+UPDATE E_EMP
+SET 제작자  = NULL;
+
+ALTER TABLE E_EMP
+MODIFY (제작자 NUMBER); 
+
+
+--열의 삭제
+ALTER TABLE E_EMP
+DROP COLUMN 제작자;  --제작자 열을 삭제
+
+--여러개의 열 삭제
+ALTER TABLE E_EMP
+DROP (GENDER, 커미션, 날짜, first_name);  
+
+SELECT * FROM E_EMP;
+
+
+--열의 이름 수정
+ALTER TABLE E_EMP
+RENAME COLUMN department_id TO 부서번호;
+ALTER TABLE E_EMP
+RENAME COLUMN salary TO 급여;
+ALTER TABLE E_EMP
+RENAME COLUMN employee_id TO 직원번호;
+ALTER TABLE E_EMP
+RENAME COLUMN last_name TO 이름;
+
+
+--테이블의 이름 변경
+RENAME E_EMP TO 직원테이블;
+
+
+
+--예제1)
+--employees 테이블의 job_id가 'ST_MAN'인 직원들을 새 테이블 stmans를 만들어 입력하라. 
+--단, 테이블의 컬럼 이름은 id, job, sal (직원 테이블의 employee_id, job_id, salary)
+CREATE TABLE stmans (id, job, sal)
+AS SELECT employee_id, job_id, salary
+FROM employees
+WHERE job_id = 'ST_MAN';
+
+SELECT * FROM stmans;
+
+
+
+
+
+--day7
+
+
+
+
+
+-- 단순한 뷰 EMP_V1 만들기
+-- 하나이ㅡ 테이블, 함수나 그룹 사용 안함, DML 사용 가능
+DROP VIEW EMP_V1; --미리 뷰 삭제 명령
+
+-- employees 테이블에서 필요한 열들을 골라서 뷰로 생성
+CREATE VIEW EMP_V1
+AS
+SELECT employee_id, first_name, last_name, email, hire_date, job_id
+FROM employees;
+
+--테이블처럼 SELECT 문 사용
+SELECT* FROM EMP_V1;
+
+DESC EMP_V1;
+
+--테이블처럼 DML 사용가능 (뷰는 가상의 테이블 : 저장공간x) -> 원본 테이블에 입력됨
+INSERT INTO EMP_V1 (employee_id, first_name, last_name, email, hire_date, job_id)
+VALUES (333, 'David', 'King', 'Dking', SYSDATE, 'IT_PROG');
+
+
+--뷰에 입력된 데이터 확인
+SELECT * FROM EMP_V1
+WHERE employee_id=333;
+DESC employees;
+
+
+--원본 테이블에서도 확인
+SELECT * FROM employees
+WHERE employee_id=333;
+
+
+--뷰 삭제하기
+DELETE FROM EMP_V1
+WHERE employee_id = 333;
+COMMIT;
+
+
+--EMP_V2 만들기
+CREATE VIEW EMP_V2
+AS
+SELECT employee_id 직원번호, first_name 이름, last_name 성, email, hire_date, job_id
+FROM employees;
+
+SELECT * FROM EMP_V2;
+
+
+-- 3번째뷰 만들기
+CREATE VIEW EMP_V3 ( 직원번호, 이름, 성, 이메일, 고용일자, 직종)
+AS
+SELECT employee_id , first_name , last_name , email, hire_date, job_id
+FROM employees;
+
+SELECT * FROM EMP_V1;
+SELECT * FROM EMP_V2;
+SELECT * FROM EMP_V3;
+SELECT * FROM employees;
+
+--DML 사용하기
+INSERT INTO EMP_V3 ( 직원번호, 이름, 성, 이메일, 고용일자, 직종)
+VALUES (334, 'Lara', 'Craft', 'Lara', SYSDATE, 'IT_PROG');
+
+
+--복잡한 뷰로써 그룹함수를 사용하는 뷰는 DML 사용 불가
+CREATE OR REPLACE VIEW 부서별_직원_보고서
+AS
+SELECT department_id 부서번호, COUNT(employee_id) 직원수,
+MAX(salary) 최고급여,
+MIN(salary) 최저급여,
+ROUND(AVG(salary)) 평균급여
+FROM employees
+GROUP BY department_id
+ORDER BY 부서번호;
+
+SELECT * FROM 부서별_직원_보고서;
+
+
+--읽기 전용뷰 (WITH READ ONLY)
+CREATE OR REPLACE VIEW EMP_V_READ
+AS
+SELECT employee_id, first_name, last_name, email, hire_date, job_id
+FROM employees
+WHERE department_id=90
+WITH READ ONLY;
+
+SELECT * FROM EMP_V_READ;
+
+
+-- DML 사용 불가
+DELETE FROM EMP_V_READ;
+
+
+
+--체크 옵션으로 뷰 만들기
+CREATE or replace VIEW EMP_V_chq_const
+AS
+SELECT employee_id, first_name, last_name, email, hire_date, job_id, department_id
+FROM employees
+WHERE department_id=90
+WITH CHECK OPTION;  --체크 옵션으로 현재 부서번호 90 일때만 수정 및 입력 가능
+
+SELECT * FROM EMP_V_chq_const;
+
+
+--90번 부서 일때만 DML 가능
+INSERT INTO EMP_V_chq_const (employee_id, first_name, last_name, email, hire_date, job_id, department_id)
+VALUES (444, 'FADI', 'ALI', 'FALI', SYSDATE, 'IT_PROG', 90);
+
+
+
+
+--인덱스 확인하기
+SELECT
+    TABLE_NAME      테이블명,
+    INDEX_NAME      인덱스이름,
+    COLUMN_NAME     컬럼이름
+FROM ALL_IND_COLUMNS   -- 오라클에서 자동 생성됨
+WHERE TABLE_NAME ='DEPARTMENTS';   --테이블이름을 대문자로
+
+
+DROP TABLE members;
+--실습으로 테이블 만들기
+CREATE TABLE members(
+    member_id   INT,
+    first_name  VARCHAR2(100) NOT NULL,
+    last_name   VARCHAR2(100) NOT NULL,
+    gender      CHAR(1) NOT NULL,
+    dob         DATE NOT NULL,
+    email       VARCHAR2(255) NOT NULL,
+    PRIMARY KEY(member_id)
+    );
+DESC members;
+
+
+--인덱스 확인하기
+SELECT
+    TABLE_NAME      테이블명,
+    INDEX_NAME      인덱스이름,
+    COLUMN_NAME     컬럼이름
+FROM ALL_IND_COLUMNS   -- 오라클에서 자동 생성됨
+WHERE TABLE_NAME ='MEMBERS';   --테이블 이름 대문자로
+
+SELECT * FROM members
+WHERE last_name = 'Harse';   --테이블 전체 검색
+
+EXPLAIN PLAN FOR        --다음 나오는 SELECT 문을 실행하여 보고서 작성
+SELECT * FROM members
+WHERE last_name = 'Harse';
+
+SELECT 
+    PLAN_TABLE_OUTPUT    --설명문을 출력
+FROM
+    TABLE(DBMS_XPLAN.DISPLAY());
+    
+    
+
+--인덱스 만들기
+CREATE INDEX members_last_name_i
+On members(last_name);
+
+
+EXPLAIN PLAN FOR        --다음 나오는 SELECT 문을 실행하여 보고서 작성
+SELECT * FROM members
+WHERE last_name = 'Harse';
+
+
+SELECT 
+    PLAN_TABLE_OUTPUT    --설명문을 출력
+FROM
+    TABLE(DBMS_XPLAN.DISPLAY());
+
+
+--인덱스 삭제하기 : 인덱스는 테이블이 drop/삭제 시 같이 삭제됨
+DROP INDEX members_last_name_i;
+
+SELECT * 
+FROM members
+WHERE first_name LIKE 'M%' AND last_name LIKE 'A%';
+
+
+CREATE INDEX name_i
+ON members(first_name, last_name);
+
+
+EXPLAIN PLAN FOR        --다음 나오는 SELECT 문을 실행하여 보고서 작성
+SELECT * FROM members
+WHERE first_name LIKE 'M%' AND last_name LIKE 'A%';
+
+
+SELECT 
+    PLAN_TABLE_OUTPUT    --설명문을 출력
+FROM
+    TABLE(DBMS_XPLAN.DISPLAY());
+
+-- 인덱스 삭세하기
+DROP INDEX name_i;
+
+
