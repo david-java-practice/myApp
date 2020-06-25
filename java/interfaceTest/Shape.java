@@ -1,0 +1,7 @@
+package interfaceTest;
+
+public interface Shape {
+	double area();  //≥–¿Ã
+	double circum();  //µ—∑π
+
+}

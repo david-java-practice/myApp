@@ -1,0 +1,30 @@
+package day07;
+
+public class PointMain extends Point {
+	private String color;
+
+	
+	public PointMain(int x, int y, String color) {
+		super(x,y);
+		this.color=color;
+	}
+	@Override//언어 테이션 오버라이드된것을 알려줌 
+	public void disp() {
+		// TODO Auto-generated method stub
+		super.disp();
+	 System.out.println("color:"+color);
+	}
+	
+	
+		
+	
+
+	public static void main(String[] args) {
+		PointMain pm=new PointMain(5,5,"yellow");
+		pm.disp();
+		pm.move(10,20);
+		pm.disp();
+		System.out.println("Point");
+	}
+
+}
