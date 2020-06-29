@@ -9,44 +9,53 @@ import javax.swing.JFrame;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-public class JGugudan extends JFrame implements ActionListener {
-	
-	JTextField tf;
-	JTextArea ta;
+public class JGugudan  extends JFrame implements ActionListener{
+	private JTextField dan; 
+	private JTextArea  ta;
 	public JGugudan() {
-		super("구구단");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //꼭 두번째에 놔두기 
+		setTitle("구구단");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(new FlowLayout());
-		tf = new JTextField(10);
-		JButton b1 = new JButton("구구단");
-		ta = new JTextArea(15,20);
-		tf.addActionListener(this); //tf칸에서 enter쳐도 답 나오게끔 ,,
-		add(tf);
-		add(b1);
+		JButton btn = new JButton("구구단");
+		 dan = new JTextField(10);
+		 ta = new JTextArea(10, 20);
+		btn.addActionListener(this);
+		dan.addActionListener(this);
+		add(dan);
+		add(btn);
 		add(ta);
-		b1.addActionListener(this);
-		setSize(300,400);
+		
+		setSize(300, 400);
 		setVisible(true);
 		
-		
 	}
-	public void actionPerformed(ActionEvent e) {
-		ta.setText(""); //초기화 
-		//예외처리 
-		try{
-			for(int i=1; i<=9; i++) {
-				int v = Integer.parseInt(tf.getText()); //형변환 ,, 
-					ta.append(v+"*"+i+"="+v*i+"\n");
-		
-			}
-		}catch(NumberFormatException n) { //n 변수 암거나 지정ㅎㅐ서,,
-			//int아닌 string형 입력 시 숫자를 입력하세요
-			ta.append("숫자를 입력하세요."); 
-		}
-	}
+
 	public static void main(String[] args) {
 		new JGugudan();
 
 	}
 
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		ta.setText("");
+			//단을 가져와서    for  수행
+		try {
+			int  d =Integer.parseInt(dan.getText());
+			for(int i =1 ;i<10; i++) {
+				//System.out.println(d+"*"+i +"="+ d*i);
+				ta.append(d+"*"+i +"="+ d*i+"\n");
+			}
+		}catch(NumberFormatException n) {
+			dan.setText("숫자를 입력하세요");
+		}
+		
+	}
+
 }
+
+
+
+
+
+
+
