@@ -4,6 +4,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="org.addrMy.config.ObjectMapper"> <!-- mapper안에 sql문 생성 -->
+<sql id="search">
+	<where>
+		<if test="word!=null and field=='name'">
+			<!-- name like '%'||#{word}||'%' -->
+			name like '%'||#{word}||'%'
+		</if>
+		<if test="word!=null and field=='tel'">
+			tel like '%'||#{word}||'%'
+		</if>
+	</where>
+</sql>
 <!-- insert -->
 <insert id="insertData" parameterType="org.addrMy.model.AddressVO">
 	insert into address(num,name,zipcode,addr,tel)
@@ -19,6 +30,49 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <!-- countData -->
 <select id="countData" resultType="int">
 	select count(*) from address
+	
+</select>
+
+
+<!-- countSearchData -->
+<select id="countSearchData"  resultType="int" parameterType="java.util.Map">
+	select count(*) from address
+	
+<include refid="search"/>
+	
+</select>
+
+
+<!-- viewData -->
+<select id="viewData" parameterType="int" resultType="org.addrMy.model.AddressVO">
+	select * from address where num=#{num}
+	
+</select>
+
+<!-- updateData -->
+<update id="updateData" parameterType="org.addrMy.model.AddressVO">
+	update address set name=#{name}, zipcode=#{zipcode}, addr=#{addr}, tel=#{tel} where num=#{num}
+	
+</update>
+
+
+<!-- deleteData -->
+<delete id="deleteData" parameterType="int">
+	delete from address where num=#{num}
+	
+</delete>
+
+<!-- zipData -->
+<select id="zipData" parameterType="String" resultType="zipvo">
+	select * from zipcode where dong like '%'||#{dong}||'%'
+	<!-- select * from zipcode where dong like '%${dong}%'  -->
+	
+</select>
+
+<!-- searchData -->
+<select id="searchData" parameterType="java.util.Map" resultType="org.addrMy.model.AddressVO">
+	select * from address
+<include refid="search"/>
 	
 </select>
 

@@ -8,9 +8,14 @@
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="../js/jquery-3.5.1.min.js"></script>
 <script>
+function zipfinder(){
+	window.open("zipAction.amy","","width=700 height=400");
+}
+</script>
+<script>
 	$(document).ready(function() {
 		$("#zipBtn").on("click", function() {
-			window.open("zip.do", "", "width=500 height=400");
+			window.open("zipAction.amy", "", "width=500 height=400");
 		})
 	})
 </script>
@@ -43,15 +48,16 @@
 
 </head>
 <body>
-	<a href="list.jsp">전체보기</a>
+	<a href="addrList.jsp">전체보기</a>
 	<!-- 클릭하면 list로 가라 -->
 	<form action="insertAction.amy" method="post" name="frm">
 		Servlet_Mybatis 주소록 등록하기<br> 이름 <input type="text" name="name"><br>
-		우편번호 <input type="text" name="zipcode" id="zipcode" size=7> <input
-			type="button" value="검색" id="zipBtn"> <br> 주소 <input
-			type="text" name="addr" id="addr" size=30><br> 전화번호 <input
-			type="text" name="tel"><br> <input type="submit"
-			value="등록"> <input type="reset" value="취소">
+		우편번호 <input type="text" name="zipcode" id="zipcode" size=7> 
+		<input type="button" value="검색" id="zipBtn"> <br> 주소 
+			<input type="text" name="addr" id="addr" size=30><br> 전화번호
+			<input type="text" name="tel"><br> 
+			<input type="submit" value="등록"> 
+			<input type="reset" value="취소">
 	</form>
 </body>
 </html>
